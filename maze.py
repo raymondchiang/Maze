@@ -30,12 +30,12 @@ size=[10,10])
 
 def Show_Maze(start=None, end=None, zoom=1):
     start = start or [0,0]
-    end = end or [Size,Size]
+    end = end or level.size
     for row in range(start[0],end[0]):
         for _ in range(zoom):
             for col in range(start[1], end[1]):
                 for _ in range(zoom):
-                    blocks[GetBlock(row,col)]()
+                    blocks[level.GetBlock(row,col)]()
             print()
 
 def get_unicode():
@@ -77,11 +77,11 @@ def game():
     while True:
         if moved:
             clear()
-            x,y = current
-            print(' Step:',step,'Coordinare:', x,',',y)
+            x,y = level.current
+            print(' Step:',level.step,' Coordinare:', x,',',y)
             Show_Maze(start=[x-2,y-2],end=[x+3,y+3],zoom=zoom)
             print()
-        if over:
+        if level.gameover:
             cprint('~~~~~~ Congratulations! ~~~~~~', 'yellow')
             return
 
@@ -100,10 +100,11 @@ def game():
                 zoom = 1
             moved = True
         elif code in DIRECTIONS:
-            moved = Move(code)
+            moved = level.Move(code)
 
 
 #------------------------------------------------------------
 if __name__ == '__main__':
     print("\nWelcome Raymond's Maze!! ")
     game()
+
