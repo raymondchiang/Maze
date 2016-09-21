@@ -12,7 +12,8 @@ prt_road = lambda: cprint('  ', 'white', 'on_white', end='')
 prt_door = lambda: cprint('  ', 'white', 'on_red', end='')
 prt_border = lambda: cprint('  ', 'white', 'on_green', end='')
 prt_player = lambda: cprint('  ', 'white', 'on_cyan', end='')
-blocks = [prt_road, prt_wall, prt_door, prt_player, prt_border]
+prt_buster = lambda: cprint('++', 'magenta', 'white', end='')
+blocks = [prt_road, prt_wall, prt_door, prt_player, prt_buster, prt_border]
 #--------------------------------------------------------------------
 level = Level([
 [3,0,1,1,1,1,1,1,0,1],
