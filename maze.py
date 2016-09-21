@@ -1,4 +1,4 @@
-import termcolor #for color
+from termcolor import cprint #for color
 import os   #for clean
 import msvcrt #for w,a,s,d
 #-------------------------------------------
@@ -12,11 +12,11 @@ Left=59435
 Right=59437
 Directions = [Up, Down, Left, Right]
 #-------------------------------------------
-prt_wall = lambda: termcolor.cprint('  ', 'white', 'on_green', end='')
-prt_road = lambda: termcolor.cprint('  ', 'white', 'on_white', end='')
-prt_door = lambda: termcolor.cprint('  ', 'white', 'on_red', end='')
-prt_border = lambda: termcolor.cprint('  ', 'white', 'on_yellow', end='')
-prt_player = lambda: termcolor.cprint('  ', 'white', 'on_blue', end='')
+prt_wall = lambda: cprint('  ', 'white', 'on_green', end='')
+prt_road = lambda: cprint('  ', 'white', 'on_white', end='')
+prt_door = lambda: cprint('  ', 'white', 'on_red', end='')
+prt_border = lambda: cprint('  ', 'white', 'on_green', end='')
+prt_player = lambda: cprint('  ', 'white', 'on_cyan', end='')
 blocks = [prt_road, prt_wall, prt_door, prt_player, prt_border]
 #--------------------------------------------------------------------
 road=[
@@ -51,7 +51,7 @@ def GetBlock(x, y):
 
 def Show_Maze(start=None, end=None, zoom=1):
     start = start or [0,0]
-    end = end or [Size-1,Size-1]
+    end = end or [Size,Size]
     for row in range(start[0],end[0]):
         for _ in range(zoom):
             for col in range(start[1], end[1]):
@@ -61,6 +61,7 @@ def Show_Maze(start=None, end=None, zoom=1):
 
 def Move(direction):
     global current, step
+    over = False
     x = current[0]
     y = current[1]
     if direction==Up:
@@ -72,15 +73,17 @@ def Move(direction):
     elif direction==Right:
         y += 1
     else:
-        return False
+        return False, over
 
     block = GetBlock(x,y)
     if block == 4 or block == 1:
-        return False
+        return False, over
     else:
+        if block == 2:
+            over = True
         current = [x,y]
         step += 1
-        return True
+        return True, over
 
 def get_unicode():
     code = 0
@@ -119,6 +122,7 @@ def game():
     global current, step
     moved = True
     zoom = 2
+    over = False
     while True:
         if moved:
             clear()
@@ -126,6 +130,9 @@ def game():
             print(' Step:',step,'Coordinare:', x,',',y)
             Show_Maze(start=[x-2,y-2],end=[x+3,y+3],zoom=zoom)
             print()
+        if over:
+            cprint('~~~~~~ Congratulations! ~~~~~~', 'yellow')
+            return
 
         moved = False
         code = get_unicode()
@@ -134,7 +141,7 @@ def game():
             print('Bye Bye~~')
             return
         elif code == ord('c'):
-            print('Fuck you bitch you cheat!')
+            cprint('Fuck you bitch you cheat!', 'red')
             Show_Maze()
         elif code == ord('z'):
             zoom += 1
@@ -142,7 +149,7 @@ def game():
                 zoom = 1
             moved = True
         elif code in Directions:
-            moved = Move(code)
+            moved, over = Move(code)
 
 
 #------------------------------------------------------------
