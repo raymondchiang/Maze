@@ -2,6 +2,9 @@ import termcolor #for color
 import os   #for clean
 import msvcrt #for w,a,s,d
 #-------------------------------------------
+if os.name == 'nt': # If it's Windows OS
+    os.system('chcp 65001') # Change encoding to UTF-8
+#-------------------------------------------
 Size=10  #10*10
 Up=72
 Down=80
@@ -39,7 +42,7 @@ def Global_Map(road):
         print()
     print()
 def Show_Maze(current,road,step):
-    print('—————————')
+    print('─────────')
     data=[current[0]-2,current[1]-2]
     for temp in range(5):
         for temp1 in range(5):
@@ -55,11 +58,11 @@ def Show_Maze(current,road,step):
                         prt_road()
                     else:
                         prt_player()
-            data[1]+=1   
+            data[1]+=1
         print()
         data[1]=current[1]-2
         data[0]+=1
-    print('—————————\nStep',step[0])
+    print('─────────\nStep',step[0])
 def Move(road,current,loc,step):
     if ord(loc)==Up:
         if current[0]==0 or road[current[0]-1][current[1]]==1:
@@ -90,12 +93,12 @@ def Move(road,current,loc,step):
             current[1]+=1
             step[0]+=1
 def introduce():
-    print('——————————————————————————')
+    print('──────────────────────────')
     print('**Keyword**\n   h : help\n   q : quit\n   c : cheat')
-    print('——————————————————————————\n')
+    print('──────────────────────────\n')
     print('**How to Play**')
     print('   Use arrow key to move !!!\n')
-    print('——————————————————————————\n')
+    print('──────────────────────────\n')
     print('Press Anywhere To Continue~~~')
     msvcrt.getch()
 #------------------------------------------------------------
@@ -128,11 +131,8 @@ while True:
     if ord(Keyword)==104:#h-->help
         need_help=True
         continue
-    loc = msvcrt.getch()    
+    loc = msvcrt.getch()
     is_clean=Move(road,current,loc,step)
     if current==[Size,Size]:
         print('Congratulations !! ')
         break
-    
-
-
