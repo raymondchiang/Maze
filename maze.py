@@ -40,8 +40,9 @@ def Show_Maze(start=None, end=None, zoom=1):
 
 def ShowMatrix(matrix, zoom=1):
     for row in matrix:
+        cells = list(row)
         for _ in range(zoom):
-            for cell in row:
+            for cell in cells:
                 for _ in range(zoom):
                     blocks[cell]()
             print()
@@ -85,7 +86,7 @@ def game():
     while True:
         if moved:
             clear()
-            ShowMatrix(level.View())
+            ShowMatrix(level.View(), zoom)
             print(' Step:',level.step)
             print()
         if level.gameover:
