@@ -39,6 +39,7 @@ for row in range(Size): # Set first site
             road[row][column]=0
             break
 #--------------------------------------------------------------------
+#TODO: Need classify
 def GetBlock(x, y):
     global current, road
 
@@ -59,6 +60,7 @@ def Show_Maze(start=None, end=None, zoom=1):
                     blocks[GetBlock(row,col)]()
             print()
 
+#TODO: Need classify
 def Move(direction):
     global current, step
     over = False
