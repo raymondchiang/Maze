@@ -24,8 +24,8 @@ level = Level([
 [1,0,0,0,0,0,0,0,0,0],
 [0,0,1,0,1,1,0,1,1,0],
 [0,1,1,0,1,1,0,1,1,0],
-[0,1,0,0,0,0,0,2,1,0]], 
-size=[10,10])
+[0,1,0,0,0,0,0,2,1,0]],
+size=[10,10],viewfield=3)
 #--------------------------------------------------------------------
 
 def Show_Maze(start=None, end=None, zoom=1):
@@ -36,6 +36,14 @@ def Show_Maze(start=None, end=None, zoom=1):
             for col in range(start[1], end[1]):
                 for _ in range(zoom):
                     blocks[level.GetBlock(row,col)]()
+            print()
+
+def ShowMatrix(matrix, zoom=1):
+    for row in matrix:
+        for _ in range(zoom):
+            for cell in row:
+                for _ in range(zoom):
+                    blocks[cell]()
             print()
 
 def get_unicode():
@@ -77,9 +85,8 @@ def game():
     while True:
         if moved:
             clear()
-            x,y = level.current
-            print(' Step:',level.step,' Coordinare:', x,',',y)
-            Show_Maze(start=[x-2,y-2],end=[x+3,y+3],zoom=zoom)
+            ShowMatrix(level.View())
+            print(' Step:',level.step)
             print()
         if level.gameover:
             cprint('~~~~~~ Congratulations! ~~~~~~', 'yellow')
@@ -93,18 +100,17 @@ def game():
             return
         elif code == ord('c'):
             cprint('Fuck you bitch you cheat!', 'red')
-            Show_Maze()
+            ShowMatrix(level.Maze())
         elif code == ord('z'):
             zoom += 1
             if zoom >= 4:
                 zoom = 1
             moved = True
-        elif code in DIRECTIONS:
-            moved = level.Move(code)
+        elif code in KEY_TO_DIRECTION.keys():
+            moved = level.Move(KEY_TO_DIRECTION[code])
 
 
 #------------------------------------------------------------
 if __name__ == '__main__':
     print("\nWelcome Raymond's Maze!! ")
     game()
-

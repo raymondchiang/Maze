@@ -51,4 +51,4 @@ def load_level_data(level_path):
             j += 1
         data.append(line_data)
 
-    return {'data': data, 'options': options}
+    return {'maze': data, 'options': options}
