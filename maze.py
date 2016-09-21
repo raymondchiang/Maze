@@ -1,16 +1,11 @@
 from termcolor import cprint #for color
+from level import Level
+from constants import *
 import os   #for clean
 import msvcrt #for w,a,s,d
 #-------------------------------------------
 if os.name == 'nt': # If it's Windows OS
     os.system('chcp 65001') # Change encoding to UTF-8
-#-------------------------------------------
-Size=10  #10*10
-Up=59432
-Down=59440
-Left=59435
-Right=59437
-Directions = [Up, Down, Left, Right]
 #-------------------------------------------
 prt_wall = lambda: cprint('  ', 'white', 'on_green', end='')
 prt_road = lambda: cprint('  ', 'white', 'on_white', end='')
@@ -19,7 +14,7 @@ prt_border = lambda: cprint('  ', 'white', 'on_green', end='')
 prt_player = lambda: cprint('  ', 'white', 'on_cyan', end='')
 blocks = [prt_road, prt_wall, prt_door, prt_player, prt_border]
 #--------------------------------------------------------------------
-road=[
+level = Level([
 [3,0,1,1,1,1,1,1,0,1],
 [1,0,0,0,0,0,0,0,0,1],
 [0,0,1,0,1,1,0,1,0,0],
@@ -29,26 +24,9 @@ road=[
 [1,0,0,0,0,0,0,0,0,0],
 [0,0,1,0,1,1,0,1,1,0],
 [0,1,1,0,1,1,0,1,1,0],
-[0,1,0,0,0,0,0,2,1,0]]
-current=[0,0] # Coordinate
-step=0 # How many steps you use in the game
-for row in range(Size): # Set first site
-    for column in range(Size):
-        if road[row][column]==3:
-            current=[row,column]
-            road[row][column]=0
-            break
+[0,1,0,0,0,0,0,2,1,0]], 
+size=[10,10])
 #--------------------------------------------------------------------
-#TODO: Need classify
-def GetBlock(x, y):
-    global current, road
-
-    if x == current[0] and y == current[1]:
-        return 3
-    elif x<0 or y<0 or x>=Size or y>=Size:
-        return 4
-    else:
-        return road[x][y]
 
 def Show_Maze(start=None, end=None, zoom=1):
     start = start or [0,0]
@@ -59,33 +37,6 @@ def Show_Maze(start=None, end=None, zoom=1):
                 for _ in range(zoom):
                     blocks[GetBlock(row,col)]()
             print()
-
-#TODO: Need classify
-def Move(direction):
-    global current, step
-    over = False
-    x = current[0]
-    y = current[1]
-    if direction==Up:
-        x -= 1
-    elif direction==Down:
-        x += 1
-    elif direction==Left:
-        y -= 1
-    elif direction==Right:
-        y += 1
-    else:
-        return False, over
-
-    block = GetBlock(x,y)
-    if block == 4 or block == 1:
-        return False, over
-    else:
-        if block == 2:
-            over = True
-        current = [x,y]
-        step += 1
-        return True, over
 
 def get_unicode():
     code = 0
@@ -121,10 +72,8 @@ def start():
 
 
 def game():
-    global current, step
     moved = True
     zoom = 2
-    over = False
     while True:
         if moved:
             clear()
@@ -150,11 +99,11 @@ def game():
             if zoom >= 4:
                 zoom = 1
             moved = True
-        elif code in Directions:
-            moved, over = Move(code)
+        elif code in DIRECTIONS:
+            moved = Move(code)
 
 
 #------------------------------------------------------------
 if __name__ == '__main__':
     print("\nWelcome Raymond's Maze!! ")
-    start()
+    game()

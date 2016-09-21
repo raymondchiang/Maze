@@ -4,39 +4,46 @@ class Level:
     # public Level()
     def __init__(self, maze, size):
         self.maze = maze # 馬子 ヽ(✿ﾟ▽ﾟ)ノ
-        self.size = size # [x,y]
+        self.size = size # [row,col]
         self.current = [0,0]
         self.step = 0
         self.gameover = False
 
-    def GetBlock(self, x, y):
-        if x == self.current[0] and y == self.current[1]:
+        for row in range(self.size[1]):
+            for col in range(self.size[0]):
+                if self.maze[row][col]==3:
+                    self.current=[row,col]
+                    self.maze[row][col]=0
+                    break
+
+    def GetBlock(self, row, col):
+        if row == self.current[0] and col == self.current[1]:
             return 3
-        elif x<0 or y<0 or x>=self.size[0] or y>=self.size[1]:
+        elif row<0 or col<0 or row>=self.size[0] or col>=self.size[1]:
             return 4
         else:
-            return self.maze[x][y]
+            return self.maze[row][col]
 
     def Move(self, direction):
-        x = self.current[0]
-        y = self.current[1]
+        row = self.current[0]
+        col = self.current[1]
         if direction==UP:
-            x -= 1
+            row -= 1
         elif direction==DOWN:
-            x += 1
+            row += 1
         elif direction==LEFT:
-            y -= 1
+            col -= 1
         elif direction==RIGHT:
-            y += 1
+            col += 1
         else:
             return False
 
-        block = self.GetBlock(x,y)
+        block = self.GetBlock(row,col)
         if block == 4 or block == 1:
             return False
         else:
             if block == 2:
                 self.gameover = True
-            self.current = [x,y]
+            self.current = [row,col]
             self.step += 1
             return True
