@@ -2,7 +2,10 @@
 A python maze game in terminal.
 
 ## Level File Format
-First line: `@width,height`, for exmple: `@10,10`
+At the header of the file:
+```
+@size=(10,10)
+```
 
 #### Symbol
 - ` ` for road
