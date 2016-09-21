@@ -41,27 +41,28 @@ def Global_Map(road):
             blocks[road[row][column]]()
         print()
     print()
-def Show_Maze(current,road,step):
+def Show_Maze(current,road,step,zoom=1):
     print('─────────')
-    data=[current[0]-2,current[1]-2]
-    for temp in range(5):
-        for temp1 in range(5):
-            for x in range(2):
-                if data[0]<0 or data[1]<0 or data[0]>Size-1 or data[1]>Size-1:
-                    prt_border()
-                else:
-                    if road[data[0]][data[1]]==2:
-                        prt_door()
-                    elif road[data[0]][data[1]]==1:
-                        prt_wall()
-                    elif road[data[0]][data[1]]==0:
-                        prt_road()
+    print(current)
+    x = current[0]-2
+    y = current[1]-2
+    print(x,y)
+    for row in range(x, x+5):
+        for _ in range(zoom):
+            for col in range(y, y+5):
+                for _ in range(zoom):
+                    if col<0 or row<0 or row>Size-1 or col>Size-1:
+                        prt_border()
                     else:
-                        prt_player()
-            data[1]+=1
-        print()
-        data[1]=current[1]-2
-        data[0]+=1
+                        if road[row][col]==2:
+                            prt_door()
+                        elif road[row][col]==1:
+                            prt_wall()
+                        elif road[row][col]==0:
+                            prt_road()
+                        else:
+                            prt_player()
+            print()
     print('─────────\nStep',step[0])
 def Move(road,current,loc,step):
     if ord(loc)==Up:
@@ -113,7 +114,7 @@ while True:
         is_clean=False
     else:
         os.system('cls') # Refresh screen
-        Show_Maze(current,road,step)
+        Show_Maze(current,road,step,3)
     if cheat==True:
         cheat=False
         Global_Map(road)
