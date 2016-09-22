@@ -1,45 +1,42 @@
 import os   #for clean
 import msvcrt #for w,a,s,d
-from termcolor import cprint #for color
+import random
+from termcolor import cprint, colored #for color
 from level import Level
 
 from constants import *
 from loader import GetLevels, LoadLevel
-from printing import Menu, Centerize, GetUnicode, Clear
+from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint
 #-------------------------------------------
 if os.name == 'nt': # If it's Windows OS
     os.system('chcp 65001') # Change encoding to UTF-8
 #-------------------------------------------
-prt_wall = lambda: cprint('  ', 'white', 'on_green', end='')
-prt_road = lambda: cprint('  ', 'white', 'on_white', end='')
-prt_door = lambda: cprint('  ', 'white', 'on_red', end='')
-prt_border = lambda: cprint('  ', 'white', 'on_green', end='')
-prt_player = lambda: cprint('  ', 'white', 'on_cyan', end='')
-prt_buster = lambda: cprint('++', 'magenta', 'on_white', end='')
+prt_wall = lambda: colored('  ', 'white', 'on_green')
+prt_road = lambda: colored('  ', 'white', 'on_white')
+prt_door = lambda: colored('  ', 'white', 'on_red')
+prt_border = lambda: colored('  ', 'white', 'on_green')
+prt_player = lambda: colored('  ', 'white', 'on_cyan')
+prt_buster = lambda: colored('++', 'magenta', 'on_white')
 blocks = [prt_road, prt_wall, prt_door, prt_player, prt_buster, prt_border]
 #--------------------------------------------------------------------
-level = Level([
-[3,0,1,1,1,1,1,1,0,1],
-[1,0,0,0,0,0,0,0,0,1],
-[0,0,1,0,1,1,0,1,0,0],
-[0,1,1,0,0,0,0,1,0,1],
-[0,0,0,0,1,1,0,0,0,1],
-[1,0,1,1,1,1,1,1,1,1],
-[1,0,0,0,0,0,0,0,0,0],
-[0,0,1,0,1,1,0,1,1,0],
-[0,1,1,0,1,1,0,1,1,0],
-[0,1,0,0,0,0,0,2,1,0]],
-size=[10,10],viewfield=3)
+levelpaths = [
+    '001',
+    '002'
+]
+level = None
 #--------------------------------------------------------------------
 
 def ShowMatrix(matrix, zoom=1):
     for row in matrix:
-        cells = list(row)
+        line = ''
+        lenght = 0
+        for cell in row:
+            for _ in range(zoom):
+                line+=blocks[cell]()
+                lenght+=2
+        line = Centerize(line, lenght=lenght)
         for _ in range(zoom):
-            for cell in cells:
-                for _ in range(zoom):
-                    blocks[cell]()
-            print()
+            PaddingPrint(line, centerize=False)
 
 def introduce():
     Clear()
@@ -70,23 +67,32 @@ def level_select():
     levels = GetLevels()
     levelnames = [os.path.basename(x) for x in levels]
     selected = Menu(levelnames+['< Back'], title="Select a Level", Large=True)
-    if selected == len(levelnames):
+    if selected in [len(levelnames),-1]:
+        # Back
         start()
     else:
         level = LoadLevel(levels[selected])
         game()
 
 def game():
+    global level
+    if not level:
+        level = LoadLevel(random.choice(levelpaths))
     moved = True
     zoom = 2
     while True:
         if moved:
             Clear()
+            print()
+            PaddingPrint(level.name, 'cyan')
+            print()
             ShowMatrix(level.View(), zoom)
-            print(' Step:',level.step)
+            print()
+            PaddingPrint('Step:'+str(level.step))
             print()
         if level.gameover:
-            cprint('~~~~~~ Congratulations! ~~~~~~', 'yellow')
+            PaddingPrint('~~~~~~ Congratulations! ~~~~~~', 'yellow')
+            print()
             return
 
         moved = False

@@ -12,15 +12,14 @@ logo = '''
  / / /_/ / / ___  | / /___/ /____    .
 /_/     /_/_/   |_|/_____/______/    .
 '''
-def PrintLogo(width=100, padding=20):
+def PrintLogo():
     print()
     for l in logo.split('\n'):
-        PaddingPrint(l, width, padding, 'yellow')
+        PaddingPrint(l, 'yellow')
     print()
 
-def Menu(items, title=None, width=100, padding=20, logo=True, Large=False):
+def Menu(items, title=None, logo=True, Large=False):
     count = len(items)
-    itemwidth = width - padding * 2
     current = 0
     while True:
         Clear()
@@ -28,7 +27,7 @@ def Menu(items, title=None, width=100, padding=20, logo=True, Large=False):
             PrintLogo()
 
         if title:
-            PaddingPrint(title, width, padding, 'cyan', attrs=['bold'])
+            PaddingPrint(title, 'cyan', attrs=['bold'])
             print()
 
         for i in range(len(items)):
@@ -38,17 +37,19 @@ def Menu(items, title=None, width=100, padding=20, logo=True, Large=False):
                 color = None, None
 
             if Large:
-                PaddingPrint(' '*itemwidth, width, padding, *color)
-            PaddingPrint(items[i], width, padding, *color)
+                PaddingPrint(' '*SCREEN_ITEM_WIDTH, *color)
+            PaddingPrint(items[i], *color)
             if Large:
-                PaddingPrint(' '*itemwidth, width, padding, *color)
+                PaddingPrint(' '*SCREEN_ITEM_WIDTH, *color)
 
-        PaddingPrint('─'*itemwidth, width, padding)
+        PaddingPrint('─'*SCREEN_ITEM_WIDTH)
         print()
 
         code = GetUnicode()
         if code == 13: # Enter
             return current
+        elif code == 27: # Escape
+            return -1
         elif code in KEY_TO_DIRECTION.keys():
             direction = KEY_TO_DIRECTION[code]
             if direction == UP:
@@ -61,14 +62,15 @@ def Menu(items, title=None, width=100, padding=20, logo=True, Large=False):
                 current = 0
 
 
-def PaddingPrint(text, width, padding, *args, **kw):
-    itemwidth = width - padding * 2
-    cprint(' '*padding, end='')
-    cprint(Centerize(text,itemwidth), *args, **kw ,end='')
-    cprint(' '*padding)
+def PaddingPrint(text, *args, centerize=True, **kw):
+    cprint(' '*SCREEN_PADDING, end='')
+    text = text if not centerize else Centerize(text,SCREEN_ITEM_WIDTH)
+    cprint(text, *args, **kw ,end='')
+    cprint(' '*SCREEN_PADDING)
 
-def Centerize(text, width):
-    lenght = len(text)
+def Centerize(text, width=SCREEN_ITEM_WIDTH, lenght=None):
+    if lenght is None:
+        lenght = len(text)
     spaces = width - lenght
     lspaces = int(spaces/2)
     rspaces = spaces - lspaces

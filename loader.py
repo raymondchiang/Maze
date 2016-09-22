@@ -17,9 +17,9 @@ def GetLevels():
 
 def LoadLevel(level_path):
     raw = None
-    
+
     if not level_path.startswith('levels'):
-        level_path = os.path.join('levels' +level_path)
+        level_path = os.path.join('levels', level_path)
     if not level_path.endswith('.lvl'):
         level_path += '.lvl'
 
