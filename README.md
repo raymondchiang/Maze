@@ -17,8 +17,8 @@ At the header of the file:
 
 
 ## Todo
-- [ ] Classify
-- [ ] Level loader
+- [x] Classify
+- [x] Level loader
 - [ ] Gate & Key
-- [ ] Start Menu
+- [x] Start Menu
 - [ ] Portals

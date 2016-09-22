@@ -1,6 +1,7 @@
 from termcolor import cprint #for color
 from level import Level
 from constants import *
+from printing import Menu, Centerize, GetUnicode, Clear
 import os   #for clean
 import msvcrt #for w,a,s,d
 #-------------------------------------------
@@ -12,7 +13,7 @@ prt_road = lambda: cprint('  ', 'white', 'on_white', end='')
 prt_door = lambda: cprint('  ', 'white', 'on_red', end='')
 prt_border = lambda: cprint('  ', 'white', 'on_green', end='')
 prt_player = lambda: cprint('  ', 'white', 'on_cyan', end='')
-prt_buster = lambda: cprint('++', 'magenta', 'white', end='')
+prt_buster = lambda: cprint('++', 'magenta', 'on_white', end='')
 blocks = [prt_road, prt_wall, prt_door, prt_player, prt_buster, prt_border]
 #--------------------------------------------------------------------
 level = Level([
@@ -29,16 +30,6 @@ level = Level([
 size=[10,10],viewfield=3)
 #--------------------------------------------------------------------
 
-def Show_Maze(start=None, end=None, zoom=1):
-    start = start or [0,0]
-    end = end or level.size
-    for row in range(start[0],end[0]):
-        for _ in range(zoom):
-            for col in range(start[1], end[1]):
-                for _ in range(zoom):
-                    blocks[level.GetBlock(row,col)]()
-            print()
-
 def ShowMatrix(matrix, zoom=1):
     for row in matrix:
         cells = list(row)
@@ -47,21 +38,10 @@ def ShowMatrix(matrix, zoom=1):
                 for _ in range(zoom):
                     blocks[cell]()
             print()
-
-def get_unicode():
-    code = 0
-    while True:
-        chcode = ord(msvcrt.getch())
-        code *= 265
-        code += chcode
-        if chcode != 224:
-            return code
-
-def clear():
-    os.system('cls')
-
+            
 def introduce():
-    clear()
+    Clear()
+
     print('──────────────────────────')
     print('**Keyword**\n   h : help\n   q : quit')
     print('──────────────────────────\n')
@@ -74,19 +54,21 @@ def help():
     introduce()
 
 def start():
-    introduce()
-    key = input()
-    if key == 'q':
+    #introduce()
+    selected = Menu(['Start Game', 'Level Select', 'Exit'], Large=True)
+    if selected == 0:
+        game()
+    elif selected == 1:
+        pass
+    else:
         return
-    game()
-
 
 def game():
     moved = True
     zoom = 2
     while True:
         if moved:
-            clear()
+            Clear()
             ShowMatrix(level.View(), zoom)
             print(' Step:',level.step)
             print()
@@ -95,7 +77,7 @@ def game():
             return
 
         moved = False
-        code = get_unicode()
+        code = GetUnicode()
 
         if code == ord('q'):
             print('Bye Bye~~')
@@ -115,4 +97,4 @@ def game():
 #------------------------------------------------------------
 if __name__ == '__main__':
     print("\nWelcome Raymond's Maze!! ")
-    game()
+    start()
