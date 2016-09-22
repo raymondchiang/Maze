@@ -15,10 +15,10 @@ logo = '''
 def PrintLogo(width=100, padding=20):
     print()
     for l in logo.split('\n'):
-        PaddingPrint(l, ('yellow',None), width, padding)
+        PaddingPrint(l, width, padding, 'yellow')
     print()
 
-def Menu(items, width=100, padding=20, logo=True, Large=False):
+def Menu(items, title=None, width=100, padding=20, logo=True, Large=False):
     count = len(items)
     itemwidth = width - padding * 2
     current = 0
@@ -26,6 +26,11 @@ def Menu(items, width=100, padding=20, logo=True, Large=False):
         Clear()
         if logo:
             PrintLogo()
+
+        if title:
+            PaddingPrint(title, width, padding, 'cyan', attrs=['bold'])
+            print()
+
         for i in range(len(items)):
             if i == current:
                 color = 'grey', 'on_white'
@@ -33,12 +38,12 @@ def Menu(items, width=100, padding=20, logo=True, Large=False):
                 color = None, None
 
             if Large:
-                PaddingPrint(' '*itemwidth, color, width, padding)
-            PaddingPrint(items[i], color, width, padding)
+                PaddingPrint(' '*itemwidth, width, padding, *color)
+            PaddingPrint(items[i], width, padding, *color)
             if Large:
-                PaddingPrint(' '*itemwidth, color, width, padding)
+                PaddingPrint(' '*itemwidth, width, padding, *color)
 
-        PaddingPrint('─'*itemwidth, (None, None), width, padding)
+        PaddingPrint('─'*itemwidth, width, padding)
         print()
 
         code = GetUnicode()
@@ -56,10 +61,10 @@ def Menu(items, width=100, padding=20, logo=True, Large=False):
                 current = 0
 
 
-def PaddingPrint(text, color, width, padding):
+def PaddingPrint(text, width, padding, *args, **kw):
     itemwidth = width - padding * 2
     cprint(' '*padding, end='')
-    cprint(Centerize(text,itemwidth), *color,end='')
+    cprint(Centerize(text,itemwidth), *args, **kw ,end='')
     cprint(' '*padding)
 
 def Centerize(text, width):

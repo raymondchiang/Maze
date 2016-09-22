@@ -1,15 +1,28 @@
-from codecs import open
-from constants import *
 import string
+import os
+from codecs import open
+from glob import glob
 
-def value_format(value):
+from constants import *
+from level import Level
+
+def ValuePaser(value):
     if value[0] in string.digits:
         return int(value)
     else:
         return value
 
-def load_level_data(level_path):
+def GetLevels():
+    return glob("levels/*.lvl")
+
+def LoadLevel(level_path):
     raw = None
+    
+    if not level_path.startswith('levels'):
+        level_path = os.path.join('levels' +level_path)
+    if not level_path.endswith('.lvl'):
+        level_path += '.lvl'
+
     with open(level_path, 'r', 'utf-8') as f:
         raw = f.read()
 
@@ -25,9 +38,9 @@ def load_level_data(level_path):
             key, value = line[1:].split('=',1)
             key = key.lower()
             if value.startswith('('):
-                value = [value_format(x) for x in value[1:-1].split(',')]
+                value = [ValuePaser(x) for x in value[1:-1].split(',')]
             else:
-                value = value_format(value)
+                value = ValuePaser(value)
             options[key] = value
         else:
             line_no = i
@@ -51,4 +64,4 @@ def load_level_data(level_path):
             j += 1
         data.append(line_data)
 
-    return {'maze': data, 'options': options}
+    return Level(maze=data, **options)

@@ -1,5 +1,6 @@
 @size=(10,10)
 @name=Level 1
+@viewfield=1
 
 P $$$$$$ $;
 $ +      $;

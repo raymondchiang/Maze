@@ -1,9 +1,11 @@
-from termcolor import cprint #for color
-from level import Level
-from constants import *
-from printing import Menu, Centerize, GetUnicode, Clear
 import os   #for clean
 import msvcrt #for w,a,s,d
+from termcolor import cprint #for color
+from level import Level
+
+from constants import *
+from loader import GetLevels, LoadLevel
+from printing import Menu, Centerize, GetUnicode, Clear
 #-------------------------------------------
 if os.name == 'nt': # If it's Windows OS
     os.system('chcp 65001') # Change encoding to UTF-8
@@ -38,7 +40,7 @@ def ShowMatrix(matrix, zoom=1):
                 for _ in range(zoom):
                     blocks[cell]()
             print()
-            
+
 def introduce():
     Clear()
 
@@ -59,9 +61,20 @@ def start():
     if selected == 0:
         game()
     elif selected == 1:
-        pass
+        level_select()
     else:
         return
+
+def level_select():
+    global level
+    levels = GetLevels()
+    levelnames = [os.path.basename(x) for x in levels]
+    selected = Menu(levelnames+['< Back'], title="Select a Level", Large=True)
+    if selected == len(levelnames):
+        start()
+    else:
+        level = LoadLevel(levels[selected])
+        game()
 
 def game():
     moved = True
