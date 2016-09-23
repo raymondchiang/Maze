@@ -2,8 +2,9 @@ import os   #for clean
 import msvcrt #for w,a,s,d
 import random
 from termcolor import cprint, colored #for color
-from level import Level
 
+from level import Level
+from generator import MazeGenerator
 from constants import *
 from loader import GetLevels, LoadLevel
 from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint
@@ -54,13 +55,21 @@ def help():
 
 def start():
     #introduce()
-    selected = Menu(['Start Game', 'Level Select', 'Exit'], Large=True)
+    selected = Menu(['Start Game', 'Random Level', 'Level Select', 'Exit'], Large=True)
     if selected == 0:
         game()
     elif selected == 1:
+        random_level()
+    elif selected == 2:
         level_select()
     else:
         return
+
+def random_level():
+    global level
+    mg = MazeGenerator()
+    level = mg.to_level()
+    game()
 
 def level_select():
     global level
