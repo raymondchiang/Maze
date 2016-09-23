@@ -106,9 +106,17 @@ def game():
         moved = False
         code = GetUnicode()
 
-        if code == ord('q'):
-            print('Bye Bye~~')
-            return
+        if code in [27, ord('q'), ord('Q')]:
+            Esc = Menu(['Continue','Back to Menu','Exit'], title="Pause", Large=True)
+            #pause_menu():
+            if Esc==0 or Esc==-1:
+                moved = True
+                Clear()
+            elif Esc==1:
+                start()
+                sys.exit()
+            elif Esc==2:
+                sys.exit()
         elif code == ord('c'):
             cprint('Fuck you bitch you cheat!', 'red')
             ShowMatrix(level.Maze())
