@@ -1,4 +1,8 @@
 import os   #for clean
+#-------------------------------------------
+if os.name == 'nt': # If it's Windows OS
+    os.system('chcp 65001') # Change encoding to UTF-8
+
 import msvcrt #for w,a,s,d
 import random
 from termcolor import cprint, colored #for color
@@ -8,9 +12,7 @@ from generator import MazeGenerator
 from constants import *
 from loader import GetLevels, LoadLevel
 from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint
-#-------------------------------------------
-if os.name == 'nt': # If it's Windows OS
-    os.system('chcp 65001') # Change encoding to UTF-8
+
 #-------------------------------------------
 prt_wall = lambda: colored('  ', 'white', 'on_green')
 prt_road = lambda: colored('  ', 'white', 'on_white')
@@ -30,12 +32,12 @@ level = None
 def ShowMatrix(matrix, zoom=1):
     for row in matrix:
         line = ''
-        lenght = 0
+        length = 0
         for cell in row:
             for _ in range(zoom):
                 line+=blocks[cell]()
-                lenght+=2
-        line = Centerize(line, lenght=lenght)
+                length+=2
+        line = Centerize(line, length=length)
         for _ in range(zoom):
             PaddingPrint(line, centerize=False)
 

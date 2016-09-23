@@ -4,18 +4,28 @@ from msvcrt import getch
 
 from constants import *
 
-logo = '''
-          ____ ___  ___  ______    _______             |
-         / __ `__ \/   |/___  /   / _____/             |
-        / / / / / / /| |   / /   / /___                |
-       / / / / / / /_| |  / /   / ____/                |
-      / / /_/ / / ___  | / /___/ /____                 |
-    /_/     /_/_/   |_|/_____/______/        ヽ(✿ﾟ▽ﾟ)ノ
-'''
+if os.name == 'nt': # If it's Windows OS
+    os.system('chcp 65001') # Change encoding to UTF-8
+
+cm = lambda t: colored(t, 'magenta')
+cy = lambda t: colored(t, 'yellow')
+cc = lambda t: colored(t, 'cyan')
+cg = lambda t: colored(t, 'green')
+
+logo = \
+cy('     ____ ___  ___ ')+cg(' ______')+cc('    _______ \n') + \
+cy('    / __ `__ \/   |')+cg('/___  /')+cc('   / _____/ \n') + \
+cy('   / / / / / / /| |')+cg('   / / ')+cc('  / /___    \n') + \
+cy('  / / / / / / /_| |')+cg('  / /  ')+cc(' / ____/    \n') + \
+cy(' / / /_/ / / ___  |')+cg(' / /___')+cc('/ /____     \n') + \
+cy('/_/     /_/_/   |_|')+cg('/_____/')+cc('______/   ') + cm('ヽ(✿ﾟ▽ﾟ)ノ') + '\n'
+
 def PrintLogo():
+    length = 45
     print()
     for l in logo.split('\n'):
-        PaddingPrint(l, 'yellow')
+        cl = Centerize(l, length=length)
+        PaddingPrint(cl, centerize=False)
     print()
 
 def Menu(items, title=None, logo=True, Large=False):
@@ -68,10 +78,10 @@ def PaddingPrint(text, *args, centerize=True, **kw):
     cprint(text, *args, **kw ,end='')
     cprint(' '*SCREEN_PADDING)
 
-def Centerize(text, width=SCREEN_ITEM_WIDTH, lenght=None):
-    if lenght is None:
-        lenght = len(text)
-    spaces = width - lenght
+def Centerize(text, width=SCREEN_ITEM_WIDTH, length=None):
+    if length is None:
+        length = len(text)
+    spaces = width - length
     lspaces = int(spaces/2)
     rspaces = spaces - lspaces
     return ' '*lspaces + text + ' '*rspaces

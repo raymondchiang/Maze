@@ -13,8 +13,8 @@ class Level:
         # Get player start point
         for row in range(self.size[1]):
             for col in range(self.size[0]):
-                if self.maze[row][col]==3:
-                    self.default_start = [0,0]
+                if self.maze[row][col]== BLOCK_PLAYER:
+                    self.default_start = [row, col]
                     self.maze[row][col]=0
                     break
 

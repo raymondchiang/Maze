@@ -16,12 +16,11 @@ class MazeGenerator:
         self.seed = seed or randstr(5)
         self.persudo = Random(self.seed)
         self.size = size or [self.persudo.randint(10,40), self.persudo.randint(10,40)]
-        x,y = self.size
         self.data = []
         self.generated = False
-        for r in range(self.size[0]):
+        for r in range(self.size[1]):
             row = []
-            for c in range(self.size[1]):
+            for c in range(self.size[0]):
                 row.append(BLOCK_WALL)
             self.data.append(row)
 
@@ -35,11 +34,11 @@ class MazeGenerator:
     def __arounds(self, point):
         x,y = point
         result = []
-        if x+1 < self.size[0]:
+        if x+1 < self.size[1]:
             result.append((x+1,y))
         if x-1 >= 0:
             result.append((x-1,y))
-        if y+1 < self.size[1]:
+        if y+1 < self.size[0]:
             result.append((x,y+1))
         if y-1 >= 0:
             result.append((x,y-1))
@@ -58,7 +57,7 @@ class MazeGenerator:
         if self.generated:
             return False
         self.start = self.persudo.randint(0, self.size[1]-1), self.persudo.randint(0, self.size[0]-1)
-        self.__set(self.start, BLOCK_PLAYER)
+        self.__set(self.start, BLOCK_AIR)
         walls = []
         visited = []
         visited.append(self.start)
@@ -87,6 +86,7 @@ class MazeGenerator:
                     if self.__get(a) == BLOCK_WALL and a not in walls:
                         walls.append(a)
 
+        self.__set(self.start, BLOCK_PLAYER)
         self.__set(last, BLOCK_EXIT)
 
         self.generated = True
@@ -94,7 +94,6 @@ class MazeGenerator:
     def to_level(self, name=None, viewfield=2):
         if not self.generated:
             self.generate()
-        name = name or 'Random Level {}'.format(self.seed)
-        x,y = self.size
-        level = Level(self.data, (y, x), name, viewfield=viewfield)
+        name = name or 'Random Level ({})'.format(self.seed)
+        level = Level(self.data, self.size, name, viewfield=viewfield)
         return level
