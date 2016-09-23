@@ -30,21 +30,20 @@ cc = lambda t: colored(t, 'cyan')
 cg = lambda t: colored(t, 'green')
 
 logo = \
-Fore.YELLOW+'     ____ ___  ___ '+Fore.GREEN+' ______'+Fore.CYAN+'    _______ \n' + \
-Fore.YELLOW+'    / __ `__ \/   |'+Fore.GREEN+'/___  /'+Fore.CYAN+'   / _____/ \n' + \
-Fore.YELLOW+'   / / / / / / /| |'+Fore.GREEN+'   / / '+Fore.CYAN+'  / /___    \n' + \
-Fore.YELLOW+'  / / / / / / /_| |'+Fore.GREEN+'  / /  '+Fore.CYAN+' / ____/    \n' + \
-Fore.YELLOW+' / / /_/ / / ___  |'+Fore.GREEN+' / /___'+Fore.CYAN+'/ /____     \n' + \
-Fore.YELLOW+'/_/     /_/_/   |_|'+Fore.GREEN+'/_____/'+Fore.CYAN+'______/   '+Fore.MAGENTA+'ヽ(✿ﾟ▽ﾟ)ノ'
+Fore.RED+'     ____ ___ '+Fore.YELLOW +' ___ '+Fore.GREEN+' ______'+Fore.CYAN+'    ______ \n' + \
+Fore.RED+'    / __ `__ \\'+Fore.YELLOW+'/   |'+Fore.GREEN+'/___  /'+Fore.CYAN+'   / ____/ \n' + \
+Fore.RED+'   / / / / / /'+Fore.YELLOW +' /| |'+Fore.GREEN+'   / / '+Fore.CYAN+'  / /___    \n' + \
+Fore.RED+'  / / / / / '+Fore.YELLOW +'/ /_| |'+Fore.GREEN+'  / /  '+Fore.CYAN+' / ____/    \n' + \
+Fore.RED+' / / /_/ / /'+Fore.YELLOW +' ___  |'+Fore.GREEN+' / /___'+Fore.CYAN+'/ /____     \n' + \
+Fore.RED+'/_/     /_'+Fore.YELLOW +'/_/   |_|'+Fore.GREEN+'/_____'+Fore.CYAN+'/______/  '+Fore.MAGENTA+'ヽ(✿ﾟ▽ﾟ)ノ\n\n' + \
+Fore.WHITE+' '*23+' by Raymond & Anthony.'
 
 def PrintLogo():
-    length = 45
+    length = 42
     print()
     for l in logo.split('\n'):
         cl = Centerize(l, length=length)
         PaddingPrint(cl, centerize=False)
-    print()
-    print()
 
 def HideCursor():
     if os.name == 'nt':
@@ -71,19 +70,19 @@ def ShowCursor():
 def ResetCursor(r=1,c=1):
     print("\033[%d;%dH" % (r, c), end='')
 
-def Menu(items, title=None, logo=True, Large=False):
+def Menu(items, title=None, header=None, Large=False):
     Clear()
     count = len(items)
     current = 0
+    header = header or PrintLogo
     while True:
-        #Clear()
         ResetCursor()
-        if logo:
-            PrintLogo()
-
+        header()
+        print()
         if title:
             PaddingPrint(title, 'cyan', attrs=['bold'])
-            print()
+
+        PaddingPrint('─'*SCREEN_ITEM_WIDTH)
 
         for i in range(len(items)):
             if i == current:
