@@ -2,17 +2,18 @@ from constants import *
 
 class Level:
     # public Level()
-    def __init__(self, maze, size, name=None, viewfield=2):
+    def __init__(self, maze, size, name=None, subname=None, viewfield=2):
         # These attribute should not be modified during lifetime
-        self.maze = maze # 馬子 ヽ(✿ﾟ▽ﾟ)ノ
-        self.size = size # [row,col]
+        self.maze = maze
+        self.size = size # [rows,cols]
         self.name = name or 'Untitled Level'
+        self.subname = subname
         self.default_start = [0,0]
         self.default_viewfield = viewfield
 
         # Get player start point
-        for row in range(self.size[1]):
-            for col in range(self.size[0]):
+        for row in range(self.size[0]):
+            for col in range(self.size[1]):
                 if self.maze[row][col]== BLOCK_PLAYER:
                     self.default_start = [row, col]
                     self.maze[row][col]=0
@@ -38,7 +39,11 @@ class Level:
         elif row<0 or col<0 or row>=self.size[0] or col>=self.size[1]:
             return BLOCK_BORDER
         else:
-            return self.maze[row][col]
+            try:
+                return self.maze[row][col]
+            except IndexError:
+                print(self.size, row,col)
+                raise
 
     def __gen_row(self, row, scol, ecol):
         for col in range(scol, ecol):

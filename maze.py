@@ -5,6 +5,7 @@ if os.name == 'nt': # If it's Windows OS
 
 import msvcrt #for w,a,s,d
 import random
+from datetime import date
 from termcolor import cprint, colored #for color
 
 from level import Level
@@ -57,12 +58,14 @@ def help():
 
 def start():
     #introduce()
-    selected = Menu(['Start Game', 'Random Level', 'Level Select', 'Exit'], Large=True)
+    selected = Menu(['Start Game', 'Daliy Run', 'Random Level', 'Level Select', 'Exit'], Large=True)
     if selected == 0:
         game()
     elif selected == 1:
-        random_level()
+        daliy_run()
     elif selected == 2:
+        random_level()
+    elif selected == 3:
         level_select()
     else:
         return
@@ -84,6 +87,14 @@ def level_select():
     else:
         level = LoadLevel(levels[selected])
         game()
+
+def daliy_run():
+    global level
+    seed = date.today().strftime('%Y%m%d')
+    mg = MazeGenerator(seed=seed+'MAZEPY')
+    level = mg.to_level()
+    level.name = 'Daliy Run ({})'.format(seed)
+    game()
 
 def game():
     global level
