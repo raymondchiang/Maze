@@ -93,6 +93,8 @@ class Level:
         else:
             if block == BLOCK_EXIT:
                 self.gameover = True
+            elif block == BLOCK_VEIW_BUSTER:
+                self.viewfield += 1
             self.current = [row,col]
             self.step += 1
             return True
