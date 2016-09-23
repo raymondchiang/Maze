@@ -1,7 +1,9 @@
 import os
 from termcolor import cprint, colored
-
+import colorama
+from colorama import Fore, Back
 from constants import *
+colorama.init(autoreset=True)
 
 try:
     from msvcrt import getch
@@ -17,18 +19,23 @@ except ImportError:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
 
+if os.name == 'nt':
+    import ctypes
+    class _CursorInfo(ctypes.Structure):
+        _fields_ = [("size", ctypes.c_int), ("visible", ctypes.c_byte)]
+
 cm = lambda t: colored(t, 'magenta')
 cy = lambda t: colored(t, 'yellow')
 cc = lambda t: colored(t, 'cyan')
 cg = lambda t: colored(t, 'green')
 
 logo = \
-cy('     ____ ___  ___ ')+cg(' ______')+cc('    _______ \n') + \
-cy('    / __ `__ \/   |')+cg('/___  /')+cc('   / _____/ \n') + \
-cy('   / / / / / / /| |')+cg('   / / ')+cc('  / /___    \n') + \
-cy('  / / / / / / /_| |')+cg('  / /  ')+cc(' / ____/    \n') + \
-cy(' / / /_/ / / ___  |')+cg(' / /___')+cc('/ /____     \n') + \
-cy('/_/     /_/_/   |_|')+cg('/_____/')+cc('______/   ') + cm('ヽ(✿ﾟ▽ﾟ)ノ') + '\n'
+Fore.YELLOW+'     ____ ___  ___ '+Fore.GREEN+' ______'+Fore.CYAN+'    _______ \n' + \
+Fore.YELLOW+'    / __ `__ \/   |'+Fore.GREEN+'/___  /'+Fore.CYAN+'   / _____/ \n' + \
+Fore.YELLOW+'   / / / / / / /| |'+Fore.GREEN+'   / / '+Fore.CYAN+'  / /___    \n' + \
+Fore.YELLOW+'  / / / / / / /_| |'+Fore.GREEN+'  / /  '+Fore.CYAN+' / ____/    \n' + \
+Fore.YELLOW+' / / /_/ / / ___  |'+Fore.GREEN+' / /___'+Fore.CYAN+'/ /____     \n' + \
+Fore.YELLOW+'/_/     /_/_/   |_|'+Fore.GREEN+'/_____/'+Fore.CYAN+'______/   '+Fore.MAGENTA+'ヽ(✿ﾟ▽ﾟ)ノ'
 
 def PrintLogo():
     length = 45
@@ -37,12 +44,40 @@ def PrintLogo():
         cl = Centerize(l, length=length)
         PaddingPrint(cl, centerize=False)
     print()
+    print()
+
+def HideCursor():
+    if os.name == 'nt':
+        ci = _CursorInfo()
+        handle = ctypes.windll.kernel32.GetStdHandle(-11)
+        ctypes.windll.kernel32.GetConsoleCursorInfo(handle, ctypes.byref(ci))
+        ci.visible = False
+        ctypes.windll.kernel32.SetConsoleCursorInfo(handle, ctypes.byref(ci))
+    elif os.name == 'posix':
+        sys.stdout.write("\033[?25l")
+        sys.stdout.flush()
+
+def ShowCursor():
+    if os.name == 'nt':
+        ci = _CursorInfo()
+        handle = ctypes.windll.kernel32.GetStdHandle(-11)
+        ctypes.windll.kernel32.GetConsoleCursorInfo(handle, ctypes.byref(ci))
+        ci.visible = True
+        ctypes.windll.kernel32.SetConsoleCursorInfo(handle, ctypes.byref(ci))
+    elif os.name == 'posix':
+        sys.stdout.write("\033[?25h")
+        sys.stdout.flush()
+
+def ResetCursor(r=1,c=1):
+    print("\033[%d;%dH" % (r, c), end='')
 
 def Menu(items, title=None, logo=True, Large=False):
+    Clear()
     count = len(items)
     current = 0
     while True:
-        Clear()
+        #Clear()
+        ResetCursor()
         if logo:
             PrintLogo()
 

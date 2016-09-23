@@ -1,7 +1,9 @@
 import os   #for clean
+import sys
 #-------------------------------------------
 if os.name == 'nt': # If it's Windows OS
     os.system('chcp 65001') # Change encoding to UTF-8
+    #sys.stdout.encoding = 'cp65001'
 
 import msvcrt #for w,a,s,d
 import random
@@ -12,7 +14,7 @@ from level import Level
 from generator import MazeGenerator
 from constants import *
 from loader import GetLevels, LoadLevel
-from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint
+from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint, HideCursor, ShowCursor, ResetCursor
 
 #-------------------------------------------
 prt_wall = lambda: colored('  ', 'white', 'on_green')
@@ -25,7 +27,8 @@ blocks = [prt_road, prt_wall, prt_door, prt_player, prt_buster, prt_border]
 #--------------------------------------------------------------------
 levelpaths = [
     '001',
-    '002'
+    '002',
+    '003'
 ]
 level = None
 #--------------------------------------------------------------------
@@ -42,19 +45,8 @@ def ShowMatrix(matrix, zoom=1):
         for _ in range(zoom):
             PaddingPrint(line, centerize=False)
 
-def introduce():
-    Clear()
-
-    print('──────────────────────────')
-    print('**Keyword**\n   h : help\n   q : quit')
-    print('──────────────────────────\n')
-    print('**How to Play**')
-    print('   Use arrow key to move !!!\n')
-    print('──────────────────────────\n')
-    print('Press Enter To Continue~~~')
-
 def help():
-    introduce()
+    pass
 
 def start():
     #introduce()
@@ -97,6 +89,7 @@ def daliy_run():
     game()
 
 def game():
+    Clear()
     global level
     if not level:
         level = LoadLevel(random.choice(levelpaths))
@@ -104,14 +97,7 @@ def game():
     zoom = 2
     while True:
         if moved:
-            Clear()
-            print()
-            PaddingPrint(level.name, 'cyan')
-            print()
-            ShowMatrix(level.View(), zoom)
-            print()
-            PaddingPrint('Step:'+str(level.step))
-            print()
+            frame_update(zoom)
         if level.gameover:
             PaddingPrint('~~~~~~ Congratulations! ~~~~~~', 'yellow')
             print()
@@ -131,11 +117,26 @@ def game():
             if zoom >= 4:
                 zoom = 1
             moved = True
+            Clear()
         elif code in KEY_TO_DIRECTION.keys():
             moved = level.Move(KEY_TO_DIRECTION[code])
 
+def frame_update(zoom):
+    #Clear()
+    ResetCursor()
+    print()
+    PaddingPrint(level.name, 'cyan')
+    print()
+    ShowMatrix(level.View(), zoom)
+    print()
+    PaddingPrint('Step:'+str(level.step))
+    print()
 
 #------------------------------------------------------------
 if __name__ == '__main__':
     print("\nWelcome Raymond's Maze!! ")
+    HideCursor()
+    Clear()
     start()
+    ShowCursor()
+    Clear()
