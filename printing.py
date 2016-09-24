@@ -4,6 +4,7 @@ import colorama
 from colorama import Fore, Back
 from constants import *
 colorama.init(autoreset=True)
+from pyfiglet import Figlet
 
 try:
     from msvcrt import getch
@@ -24,10 +25,6 @@ if os.name == 'nt':
     class _CursorInfo(ctypes.Structure):
         _fields_ = [("size", ctypes.c_int), ("visible", ctypes.c_byte)]
 
-cm = lambda t: colored(t, 'magenta')
-cy = lambda t: colored(t, 'yellow')
-cc = lambda t: colored(t, 'cyan')
-cg = lambda t: colored(t, 'green')
 
 logo = \
 Fore.RED+'     ____ ___ '+Fore.YELLOW +' ___ '+Fore.GREEN+' ______'+Fore.CYAN+'    ______ \n' + \
@@ -69,6 +66,20 @@ def ShowCursor():
 
 def ResetCursor(r=1,c=1):
     print("\033[%d;%dH" % (r, c), end='')
+
+def PrintFiglet(text, font='slant', color='cyan'):
+    figlet = Figlet(font=font)
+    text = figlet.renderText(text).rstrip()
+    max_length = 0
+    for s in text.split('\n'):
+        length = len(s)
+        if length > max_length:
+            max_length = length
+
+    print()
+    for l in text.split('\n'):
+        cl = Centerize(l, length=max_length)
+        PaddingPrint(cl, centerize=False, color=color)
 
 def Menu(items, title=None, header=None, Large=False):
     Clear()
