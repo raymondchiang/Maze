@@ -2,7 +2,11 @@ from constants import *
 
 class Level:
     # public Level()
-    def __init__(self, maze, size, name=None, subname=None, viewfield=2):
+    def __init__(self, maze, size,
+                 name=None,
+                 subname=None,
+                 viewfield=2,
+                 next_level_generator=None):
         # These attribute should not be modified during lifetime
         self.maze = maze
         self.size = size # [rows,cols]
@@ -10,6 +14,8 @@ class Level:
         self.subname = subname
         self.default_start = [0,0]
         self.default_viewfield = viewfield
+        self.next_level = None
+        self.next_level_generator = next_level_generator
 
         # Get player start point
         for row in range(self.size[0]):
@@ -31,6 +37,16 @@ class Level:
         self.step = 0
         self.viewfield = self.default_viewfield
         self.overlay = {}
+
+    def NextLevel(self):
+        if self.next_level:
+            return self.next_level
+
+        if self.next_level_generator:
+            self.next_level = self.next_level_generator()
+            return self.next_level
+
+        return None
 
     def GetBlock(self, row, col):
         '''Get the block code by 'row' and 'col'.'''

@@ -4,6 +4,7 @@ if __name__ == '__main__':
 import os
 import sys
 import random
+import time
 from datetime import date
 from termcolor import cprint, colored #for color
 #----------- Custom Packages -------------------------------------------
@@ -29,11 +30,7 @@ PRINT_BLOCKS = {
     BLOCK_VEIW_BUSTER : CB.WHITE + CF.MAGENTA + ' +'
 }
 #--------------------------------------------------------------------
-levelpaths = [
-    '001',
-    '002',
-    '003'
-]
+levelpaths = ['000','001','002','003']
 #--------------------------------------------------------------------
 
 def ShowMatrix(matrix, zoom=1):
@@ -52,10 +49,13 @@ def ShowMatrix(matrix, zoom=1):
 class Game:
     def __init__(self):
         self.level = None
-        self.zoom  = 2
+        self.zoom  = 3
+        self.cheated = False
 
     def MainMenu(self):
-        selected = Menu(['Start Game', 'Daliy Run', 'Random Level', 'Level Select', 'Exit'], Large=True)
+        menu = ['Start Game', 'Daliy Run', 'Random Level',
+                'Level Select', 'Exit']
+        selected = Menu(menu, Large=True)
         if selected == 0:
             self.Play()
         elif selected == 1:
@@ -71,37 +71,50 @@ class Game:
         Clear()
         sys.exit()
 
+    def Pause(self):
+        Esc = Menu(['Continue','Back to Menu','Exit'],
+                   header=lambda: PrintFiglet('Pause'), Large=True)
+        #pause_menu():
+        if Esc==0 or Esc==-1:
+            Clear()
+        elif Esc==1:
+            self.MainMenu()
+        else:
+            self.Exit()
+
+    def Cheat(self):
+        self.cheated = True
+        Clear()
+        print()
+        PaddingPrint('You cheat!', 'white', 'on_red')
+        print()
+        ShowMatrix(self.level.Maze())
+        time.sleep(CHEAT_PEEK_TIMER)
+        Clear()
+
     def Play(self):
         Clear()
         if not self.level:
             self.level = LoadLevel(levelpaths[0])
         update_needed = True
-        self.zoom = 2
+        self.zoom = 3
+        self.cheated = False
         while True:
             if update_needed:
                 self.FrameUpdate()
             if self.level.gameover:
-                PaddingPrint('~~~~~~ Congratulations! ~~~~~~', 'yellow')
-                print()
+                self.GameOver()
                 return
 
             update_needed = False
             code = GetUnicode()
 
             if code in [27, ord('q'), ord('Q')]:
-                Esc = Menu(['Continue','Back to Menu','Exit'], header=lambda: PrintFiglet('Pause'), Large=True)
-                #pause_menu():
-                if Esc==0 or Esc==-1:
-                    update_needed = True
-                    Clear()
-                elif Esc==1:
-                    self.MainMenu()
-                elif Esc==2:
-                    self.Exit()
-
+                self.Pause()
+                update_needed = True
             elif code == ord('c'):
-                cprint('Fuck you bitch you cheat!', 'red')
-                ShowMatrix(self.level.Maze())
+                self.Cheat()
+                update_needed = True
             elif code == ord('z'):
                 self.zoom += 1
                 if self.zoom >= 4:
@@ -111,8 +124,26 @@ class Game:
             elif code in KEY_TO_DIRECTION.keys():
                 update_needed = self.level.Move(KEY_TO_DIRECTION[code])
 
+    def GameOver(self):
+        next_level = self.level.NextLevel()
+        self.level.Reset()
+        menu = ['Main Menu', 'Exit']
+        header = lambda: PrintFiglet('Congratulations !','standard','yellow')
+        if next_level:
+            menu = ['Next Level'] + menu
 
-    def help(self):
+        selected = Menu(menu, header=header, Large=True)
+        if not next_level:
+            selected += 1
+        if selected == 0:
+            self.level = next_level
+            self.Play()
+        elif selected == 1:
+            self.MainMenu()
+        else:
+            self.Exit()
+
+    def Help(self):
         pass
 
     def RandomLevel(self):
