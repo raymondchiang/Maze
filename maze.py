@@ -1,21 +1,20 @@
+#----------- Unicode Hack --------------------------------
 import os   #for clean
 import sys
-#-------------------------------------------
 if os.name == 'nt': # If it's Windows OS
     os.system('chcp 65001') # Change encoding to UTF-8
     #sys.stdout.encoding = 'cp65001'
-
+#----------- Built-in Packages -------------------------------
 import msvcrt #for w,a,s,d
 import random
 from datetime import date
 from termcolor import cprint, colored #for color
-
+#----------- Custom Packages -------------------------------------------
 from level import Level
 from generator import MazeGenerator
 from constants import *
 from loader import GetLevels, LoadLevel
 from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint, HideCursor, ShowCursor, ResetCursor
-
 #-------------------------------------------
 prt_wall = lambda: colored('  ', 'white', 'on_green')
 prt_road = lambda: colored('  ', 'white', 'on_white')
