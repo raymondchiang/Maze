@@ -94,6 +94,7 @@ class MazeGenerator:
     def to_level(self, name=None, viewfield=2):
         if not self.generated:
             self.generate()
-        name = name or 'Random Level ({})'.format(self.seed)
-        level = Level(self.data, self.size, name, viewfield=viewfield)
+        name = name or 'Random Level'
+        subname = self.seed
+        level = Level(self.data, self.size, name, subname=subname, viewfield=viewfield)
         return level

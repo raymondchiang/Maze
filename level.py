@@ -30,6 +30,7 @@ class Level:
         self.gameover = False
         self.step = 0
         self.viewfield = self.default_viewfield
+        self.overlay = {}
 
     def GetBlock(self, row, col):
         '''Get the block code by 'row' and 'col'.'''
@@ -39,11 +40,9 @@ class Level:
         elif row<0 or col<0 or row>=self.size[0] or col>=self.size[1]:
             return BLOCK_BORDER
         else:
-            try:
-                return self.maze[row][col]
-            except IndexError:
-                print(self.size, row,col)
-                raise
+            if (row, col) in self.overlay.keys():
+                return self.overlay[(row, col)]
+            return self.maze[row][col]
 
     def __gen_row(self, row, scol, ecol):
         for col in range(scol, ecol):
@@ -95,6 +94,7 @@ class Level:
                 self.gameover = True
             elif block == BLOCK_VEIW_BUSTER:
                 self.viewfield += 1
+                self.overlay[(row, col)] = BLOCK_AIR
             self.current = [row,col]
             self.step += 1
             return True

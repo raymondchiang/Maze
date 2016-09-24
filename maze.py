@@ -48,7 +48,7 @@ def ShowMatrix(matrix, zoom=1):
         line = Centerize(line, length=length)
         for _ in range(zoom):
             PaddingPrint(line, centerize=False)
-            
+
 class Game:
     def __init__(self):
         self.level = None
@@ -75,24 +75,24 @@ class Game:
         Clear()
         if not self.level:
             self.level = LoadLevel(levelpaths[0])
-        moved = True
+        update_needed = True
         self.zoom = 2
         while True:
-            if moved:
+            if update_needed:
                 self.FrameUpdate()
             if self.level.gameover:
                 PaddingPrint('~~~~~~ Congratulations! ~~~~~~', 'yellow')
                 print()
                 return
 
-            moved = False
+            update_needed = False
             code = GetUnicode()
 
             if code in [27, ord('q'), ord('Q')]:
                 Esc = Menu(['Continue','Back to Menu','Exit'], header=lambda: PrintFiglet('Pause'), Large=True)
                 #pause_menu():
                 if Esc==0 or Esc==-1:
-                    moved = True
+                    update_needed = True
                     Clear()
                 elif Esc==1:
                     self.MainMenu()
@@ -106,10 +106,10 @@ class Game:
                 self.zoom += 1
                 if self.zoom >= 4:
                     self.zoom = 1
-                moved = True
+                update_needed = True
                 Clear()
             elif code in KEY_TO_DIRECTION.keys():
-                moved = self.level.Move(KEY_TO_DIRECTION[code])
+                update_needed = self.level.Move(KEY_TO_DIRECTION[code])
 
 
     def help(self):
@@ -132,17 +132,20 @@ class Game:
             self.Play()
 
     def DaliyRun(self):
-        seed = date.today().strftime('%Y%m%d')
-        mg = MazeGenerator(seed=seed+'MAZEPY')
+        today = date.today().strftime('%Y-%m-%d')
+        mg = MazeGenerator(seed=today+'MAZEPY')
         self.level = mg.to_level()
-        self.level.name = 'Daliy Run ({})'.format(seed)
+        self.level.name = 'Daliy  Run'
+        self.level.subname = today
         self.Play()
 
     def FrameUpdate(self):
         #Clear()
         ResetCursor()
         print()
-        PaddingPrint(self.level.name, 'cyan')
+        PaddingPrint(self.level.name)
+        if self.level.subname:
+            PaddingPrint(self.level.subname, 'cyan')
         print()
         ShowMatrix(self.level.View(), self.zoom)
         print()
