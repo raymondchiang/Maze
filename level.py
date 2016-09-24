@@ -1,5 +1,8 @@
 from constants import *
 
+def inrange(value, ranges):
+    return ranges[0]<=value<=ranges[1]
+
 class Level:
     # public Level()
     def __init__(self, maze, size,
@@ -16,14 +19,25 @@ class Level:
         self.default_viewfield = viewfield
         self.next_level = None
         self.next_level_generator = next_level_generator
+        self.gates = {}
+        self.portals = {}
 
         # Get player start point
         for row in range(self.size[0]):
             for col in range(self.size[1]):
-                if self.maze[row][col]== BLOCK_PLAYER:
-                    self.default_start = [row, col]
-                    self.maze[row][col]=0
-                    break
+                block = self.maze[row][col]
+                if block == BLOCK_PLAYER:
+                    self.default_start  = [row, col]
+                    self.maze[row][col] = 0
+                elif inrange(block, BLOCKS_GATES):
+                    key = block - 100
+                    if not key in self.gates.keys():
+                        self.gates[key] = []
+                    self.gates[key].append((row, col))
+                elif inrange(block, BLOCKS_PORTALS):
+                    if not block in self.portals.keys():
+                        self.portals[block] = []
+                    self.portals[block].append((row, col))
 
         # Reset the level
         self.Reset()
@@ -106,11 +120,23 @@ class Level:
         if block in BLOCKING_BLOCKS:
             return False
         else:
+            self.current = [row,col]
+            self.step += 1
             if block == BLOCK_EXIT:
                 self.gameover = True
             elif block == BLOCK_VEIW_BUSTER:
                 self.viewfield += 1
                 self.overlay[(row, col)] = BLOCK_AIR
-            self.current = [row,col]
-            self.step += 1
+            elif inrange(block, BLOCKS_KEYS):
+                self.overlay[(row, col)] = BLOCK_AIR
+                for gate in self.gates.get(block, []):
+                    self.overlay[gate] = BLOCK_AIR
+            elif inrange(block, BLOCKS_PORTALS):
+                portals = self.portals.get(block, [])
+                if len(portals) == 2:
+                    p1, p2 = portals
+                    if p1 == (row, col):
+                        self.current=list(p2)
+                    else:
+                        self.current=list(p1)
             return True

@@ -24,14 +24,14 @@ PRINT_BLOCKS = {
     BLOCK_EXIT        : CB.RED   + '  ',
     BLOCK_PLAYER      : CB.CYAN  + '  ',
     BLOCK_BORDER      : CB.GREEN + '  ',
-    BLOCK_KEY         : CB.WHITE + CF.YELLOW + ' ⚷',
+    BLOCK_KEY         : CB.WHITE + CF.YELLOW + '@=',
     BLOCK_GATE        : CB.YELLOW + CF.RED + 'XX',
     BLOCK_PORTAL      : CB.BLUE + '*>',
     BLOCK_VEIW_BUSTER : CB.WHITE + CF.MAGENTA + ' +'
 }
 #--------------------------------------------------------------------
 # How many levels are prepared
-TOTAL_LEVELS = 4
+TOTAL_LEVELS = 6
 #--------------------------------------------------------------------
 
 def GetLevel(level_no=0):
@@ -175,7 +175,7 @@ class Game:
             # Back
             self.MainMenu()
         else:
-            self.level = LoadLevel(levels[selected])
+            self.level = GetLevel(selected)
             self.Play()
 
     def DaliyRun(self):

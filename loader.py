@@ -13,7 +13,7 @@ def ValuePaser(value):
         return value
 
 def ListLevels():
-    return glob("levels/*.lvl")
+    return sorted(glob("levels/*.lvl"))
 
 def LoadLevel(level_path):
     raw = None

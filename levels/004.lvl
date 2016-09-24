@@ -1,15 +1,15 @@
 @size=(10,10)
-@name=Level 3
-@subname=Where am I ?
+@name=Level 4
+@subname=A Gate ?
 @viewfield=2
 
-P   T$   $;
+P        $;
 $$$$$$$  $;
     $$$$  ;
  $$    $ $;
   $ $$   $;
 $ $$$$$$ $;
-  $       ;
- $  $$ $$ ;
+       $  ;
+ $$ $$ $$ ;
  $$$$$$$$ ;
-       E$T;
+      GE$K;
