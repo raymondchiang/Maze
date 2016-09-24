@@ -14,7 +14,12 @@ from level import Level
 from generator import MazeGenerator
 from constants import *
 from loader import GetLevels, LoadLevel
+<<<<<<< HEAD
 from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint, HideCursor, ShowCursor, ResetCursor
+=======
+from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint, HideCursor, ShowCursor, ResetCursor, PrintFiglet
+
+>>>>>>> f46e63a2fc3a1c3fae5dba50f78bc8ea715fe28d
 #-------------------------------------------
 prt_wall = lambda: colored('  ', 'white', 'on_green')
 prt_road = lambda: colored('  ', 'white', 'on_white')
@@ -71,7 +76,7 @@ def level_select():
     global level
     levels = GetLevels()
     levelnames = [os.path.basename(x) for x in levels]
-    selected = Menu(levelnames+['< Back'], title="Select a Level", Large=True)
+    selected = Menu(levelnames+['< Back'], header=lambda: PrintFiglet('Select a Level'), Large=True)
     if selected in [len(levelnames),-1]:
         # Back
         start()
@@ -106,7 +111,7 @@ def game():
         code = GetUnicode()
 
         if code in [27, ord('q'), ord('Q')]:
-            Esc = Menu(['Continue','Back to Menu','Exit'], title="Pause", Large=True)
+            Esc = Menu(['Continue','Back to Menu','Exit'], header=lambda: PrintFiglet('Pause'), Large=True)
             #pause_menu():
             if Esc==0 or Esc==-1:
                 moved = True
