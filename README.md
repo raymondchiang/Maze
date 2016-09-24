@@ -5,6 +5,8 @@ A python maze game in terminal.
 At the header of the file:
 ```
 @size=(10,10)
+@name=Level 1
+@viewfield=1
 ```
 
 #### Symbol
@@ -14,6 +16,24 @@ At the header of the file:
 - **`G`** ate
 - **`K`** ey
 - **`E`** nd
+
+#### Example
+```
+@size=(10,10)
+@name=Level 1
+@viewfield=1
+
+P $$$$$$ $;
+$ +      $;
+  $ $$$$  ;
+ $$    $ $;
+  $ $$   $;
+$ $$$$$$ $;
+$      $  ;
+  $ $$ $$ ;
+ $$ $$$$$ ;
+ $     E$ ;
+```
 
 
 ## Todo

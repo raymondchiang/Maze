@@ -14,12 +14,7 @@ from level import Level
 from generator import MazeGenerator
 from constants import *
 from loader import GetLevels, LoadLevel
-<<<<<<< HEAD
-from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint, HideCursor, ShowCursor, ResetCursor
-=======
 from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint, HideCursor, ShowCursor, ResetCursor, PrintFiglet
-
->>>>>>> f46e63a2fc3a1c3fae5dba50f78bc8ea715fe28d
 #-------------------------------------------
 prt_wall = lambda: colored('  ', 'white', 'on_green')
 prt_road = lambda: colored('  ', 'white', 'on_white')
@@ -73,7 +68,7 @@ class Game:
     def Play(self):
         Clear()
         if not self.level:
-            self.level = LoadLevel(random.choice(levelpaths))
+            self.level = LoadLevel(levelpaths[0])
         moved = True
         self.zoom = 2
         while True:
