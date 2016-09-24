@@ -30,7 +30,6 @@ levelpaths = [
     '002',
     '003'
 ]
-level = None
 #--------------------------------------------------------------------
 
 def ShowMatrix(matrix, zoom=1):
@@ -45,106 +44,111 @@ def ShowMatrix(matrix, zoom=1):
         for _ in range(zoom):
             PaddingPrint(line, centerize=False)
 
-def help():
-    pass
+class Game:
+    def __init__(self):
+        self.level = None
+        self.zoom  = 2
 
-def start():
-    #introduce()
-    selected = Menu(['Start Game', 'Daliy Run', 'Random Level', 'Level Select', 'Exit'], Large=True)
-    if selected == 0:
-        game()
-    elif selected == 1:
-        daliy_run()
-    elif selected == 2:
-        random_level()
-    elif selected == 3:
-        level_select()
-    else:
-        return
+    def MainMenu(self):
+        selected = Menu(['Start Game', 'Daliy Run', 'Random Level', 'Level Select', 'Exit'], Large=True)
+        if selected == 0:
+            self.Play()
+        elif selected == 1:
+            self.DaliyRun()
+        elif selected == 2:
+            self.RandomLevel()
+        elif selected == 3:
+            self.LevelSelect()
+        else:
+            self.Exit()
 
-def random_level():
-    global level
-    mg = MazeGenerator()
-    level = mg.to_level()
-    game()
+    def Exit(self):
+        Clear()
+        sys.exit()
 
-def level_select():
-    global level
-    levels = GetLevels()
-    levelnames = [os.path.basename(x) for x in levels]
-    selected = Menu(levelnames+['< Back'], header=lambda: PrintFiglet('Select a Level'), Large=True)
-    if selected in [len(levelnames),-1]:
-        # Back
-        start()
-    else:
-        level = LoadLevel(levels[selected])
-        game()
+    def Play(self):
+        Clear()
+        if not self.level:
+            self.level = LoadLevel(random.choice(levelpaths))
+        moved = True
+        self.zoom = 2
+        while True:
+            if moved:
+                self.FrameUpdate()
+            if self.level.gameover:
+                PaddingPrint('~~~~~~ Congratulations! ~~~~~~', 'yellow')
+                print()
+                return
 
-def daliy_run():
-    global level
-    seed = date.today().strftime('%Y%m%d')
-    mg = MazeGenerator(seed=seed+'MAZEPY')
-    level = mg.to_level()
-    level.name = 'Daliy Run ({})'.format(seed)
-    game()
+            moved = False
+            code = GetUnicode()
 
-def game():
-    Clear()
-    global level
-    if not level:
-        level = LoadLevel(random.choice(levelpaths))
-    moved = True
-    zoom = 2
-    while True:
-        if moved:
-            frame_update(zoom)
-        if level.gameover:
-            PaddingPrint('~~~~~~ Congratulations! ~~~~~~', 'yellow')
-            print()
-            return
+            if code in [27, ord('q'), ord('Q')]:
+                Esc = Menu(['Continue','Back to Menu','Exit'], header=lambda: PrintFiglet('Pause'), Large=True)
+                #pause_menu():
+                if Esc==0 or Esc==-1:
+                    moved = True
+                    Clear()
+                elif Esc==1:
+                    self.MainMenu()
+                elif Esc==2:
+                    self.Exit()
 
-        moved = False
-        code = GetUnicode()
-
-        if code in [27, ord('q'), ord('Q')]:
-            Esc = Menu(['Continue','Back to Menu','Exit'], header=lambda: PrintFiglet('Pause'), Large=True)
-            #pause_menu():
-            if Esc==0 or Esc==-1:
+            elif code == ord('c'):
+                cprint('Fuck you bitch you cheat!', 'red')
+                ShowMatrix(self.level.Maze())
+            elif code == ord('z'):
+                self.zoom += 1
+                if self.zoom >= 4:
+                    self.zoom = 1
                 moved = True
                 Clear()
-            elif Esc==1:
-                start()
-                sys.exit()
-            elif Esc==2:
-                sys.exit()
-        elif code == ord('c'):
-            cprint('Fuck you bitch you cheat!', 'red')
-            ShowMatrix(level.Maze())
-        elif code == ord('z'):
-            zoom += 1
-            if zoom >= 4:
-                zoom = 1
-            moved = True
-            Clear()
-        elif code in KEY_TO_DIRECTION.keys():
-            moved = level.Move(KEY_TO_DIRECTION[code])
+            elif code in KEY_TO_DIRECTION.keys():
+                moved = self.level.Move(KEY_TO_DIRECTION[code])
 
-def frame_update(zoom):
-    #Clear()
-    ResetCursor()
-    print()
-    PaddingPrint(level.name, 'cyan')
-    print()
-    ShowMatrix(level.View(), zoom)
-    print()
-    PaddingPrint('Step:'+str(level.step))
-    print()
+
+    def help(self):
+        pass
+
+    def RandomLevel(self):
+        mg = MazeGenerator()
+        self.level = mg.to_level()
+        self.Play()
+
+    def LevelSelect(self):
+        levels = GetLevels()
+        levelnames = [os.path.basename(x) for x in levels]
+        selected = Menu(levelnames+['< Back'], header=lambda: PrintFiglet('Select a Level'), Large=True)
+        if selected in [len(levelnames),-1]:
+            # Back
+            self.MainMenu()
+        else:
+            self.level = LoadLevel(levels[selected])
+            self.Play()
+
+    def DaliyRun(self):
+        seed = date.today().strftime('%Y%m%d')
+        mg = MazeGenerator(seed=seed+'MAZEPY')
+        self.level = mg.to_level()
+        self.level.name = 'Daliy Run ({})'.format(seed)
+        self.Play()
+
+    def FrameUpdate(self):
+        #Clear()
+        ResetCursor()
+        print()
+        PaddingPrint(self.level.name, 'cyan')
+        print()
+        ShowMatrix(self.level.View(), self.zoom)
+        print()
+        PaddingPrint('Step:'+str(self.level.step))
+        print()
 
 #------------------------------------------------------------
 if __name__ == '__main__':
-    print("\nWelcome Raymond's Maze!! ")
     HideCursor()
     Clear()
-    start()
+    g = Game()
+    g.MainMenu()
     ShowCursor()
     Clear()
