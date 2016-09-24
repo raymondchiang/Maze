@@ -1,11 +1,31 @@
+#----------- Built-in Packages -------------------------------
 import os
+import sys
 from termcolor import cprint, colored
 import colorama
-from colorama import Fore, Back
+from pyfiglet import Figlet
 from constants import *
 colorama.init(autoreset=True)
-from pyfiglet import Figlet
+#----------- Windows Console Hacks -------------------------------
+# Unicode Checking
+if os.name == 'nt':
+    # Change encoding to UTF-8
+    os.system('@chcp 65001')
+    print('Unicode Check: ', end='')
+    try:
+        print(CF.GREEN+'😀 Ok.')
+    except UnicodeEncodeError:
+        print(CF.WHITE+CB.RED+'Failed.')
+        print(CF.YELLOW+'Please restart Maze and try again.')
+        sys.exit()
 
+# Cursor hide/show hacking
+if os.name == 'nt':
+    import ctypes
+    class _CursorInfo(ctypes.Structure):
+        _fields_ = [("size", ctypes.c_int), ("visible", ctypes.c_byte)]
+
+# Portable "getch"
 try:
     from msvcrt import getch
 except ImportError:
@@ -20,26 +40,10 @@ except ImportError:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
         return ch
 
-if os.name == 'nt':
-    import ctypes
-    class _CursorInfo(ctypes.Structure):
-        _fields_ = [("size", ctypes.c_int), ("visible", ctypes.c_byte)]
-
-
-logo = \
-Fore.RED+'     ____ ___ '+Fore.YELLOW +' ___ '+Fore.GREEN+' ______'+Fore.CYAN+'    ______ \n' + \
-Fore.RED+'    / __ `__ \\'+Fore.YELLOW+'/   |'+Fore.GREEN+'/___  /'+Fore.CYAN+'   / ____/ \n' + \
-Fore.RED+'   / / / / / /'+Fore.YELLOW +' /| |'+Fore.GREEN+'   / / '+Fore.CYAN+'  / /___    \n' + \
-Fore.RED+'  / / / / / '+Fore.YELLOW +'/ /_| |'+Fore.GREEN+'  / /  '+Fore.CYAN+' / ____/    \n' + \
-Fore.RED+' / / /_/ / /'+Fore.YELLOW +' ___  |'+Fore.GREEN+' / /___'+Fore.CYAN+'/ /____     \n' + \
-Fore.RED+'/_/     /_'+Fore.YELLOW +'/_/   |_|'+Fore.GREEN+'/_____'+Fore.CYAN+'/______/  '+Fore.MAGENTA+'ヽ(✿ﾟ▽ﾟ)ノ\n\n' + \
-Fore.WHITE+' '*23+' by Raymond & Anthony.'
-
+#----------- Functions -------------------------------
 def PrintLogo():
-    length = 42
-    print()
-    for l in logo.split('\n'):
-        cl = Centerize(l, length=length)
+    for l in LOGO_FIGLET.split('\n'):
+        cl = Centerize(l, length=LOGO_FIGLET_LENGTH)
         PaddingPrint(cl, centerize=False)
 
 def HideCursor():
@@ -69,15 +73,11 @@ def ResetCursor(r=1,c=1):
 
 def PrintFiglet(text, font='slant', color='cyan'):
     figlet = Figlet(font=font)
-    text = figlet.renderText(text).rstrip()
-    max_length = 0
-    for s in text.split('\n'):
-        length = len(s)
-        if length > max_length:
-            max_length = length
+    text = '\n' + figlet.renderText(text).rstrip()
+    lines = text.split('\n')
+    max_length = max([len(l) for l in lines])
 
-    print()
-    for l in text.split('\n'):
+    for l in lines:
         cl = Centerize(l, length=max_length)
         PaddingPrint(cl, centerize=False, color=color)
 
@@ -126,7 +126,6 @@ def Menu(items, title=None, header=None, Large=False):
             elif current >= count:
                 current = 0
 
-
 def PaddingPrint(text, *args, centerize=True, **kw):
     cprint(' '*SCREEN_PADDING, end='')
     text = text if not centerize else Centerize(text,SCREEN_ITEM_WIDTH)
@@ -151,4 +150,7 @@ def GetUnicode():
             return code
 
 def Clear():
-    os.system('cls')
+    if os.name == 'nt':
+        os.system('cls')
+    else:
+        os.system('clear')

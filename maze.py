@@ -1,28 +1,33 @@
-#----------- Unicode Hack --------------------------------
-import os   #for clean
-import sys
-if os.name == 'nt': # If it's Windows OS
-    os.system('chcp 65001') # Change encoding to UTF-8
-    #sys.stdout.encoding = 'cp65001'
+if __name__ == '__main__':
+    print('Initialization...')
 #----------- Built-in Packages -------------------------------
-import msvcrt #for w,a,s,d
+import os
+import sys
 import random
 from datetime import date
 from termcolor import cprint, colored #for color
 #----------- Custom Packages -------------------------------------------
+from printing import (
+    Menu, Centerize, GetUnicode,
+    Clear, PaddingPrint, HideCursor,
+    ShowCursor, ResetCursor,
+    PrintFiglet)
 from level import Level
 from generator import MazeGenerator
 from constants import *
 from loader import GetLevels, LoadLevel
-from printing import Menu, Centerize, GetUnicode, Clear, PaddingPrint, HideCursor, ShowCursor, ResetCursor, PrintFiglet
 #-------------------------------------------
-prt_wall = lambda: colored('  ', 'white', 'on_green')
-prt_road = lambda: colored('  ', 'white', 'on_white')
-prt_door = lambda: colored('  ', 'white', 'on_red')
-prt_border = lambda: colored('  ', 'white', 'on_green')
-prt_player = lambda: colored('  ', 'white', 'on_cyan')
-prt_buster = lambda: colored('++', 'magenta', 'on_white')
-blocks = [prt_road, prt_wall, prt_door, prt_player, prt_buster, prt_border]
+PRINT_BLOCKS = {
+    BLOCK_AIR         : CB.WHITE + '  ',
+    BLOCK_WALL        : CB.GREEN + '  ',
+    BLOCK_EXIT        : CB.RED   + '  ',
+    BLOCK_PLAYER      : CB.CYAN  + '  ',
+    BLOCK_BORDER      : CB.GREEN + '  ',
+    BLOCK_KEY         : CB.WHITE + CF.YELLOW + ' ⚷',
+    BLOCK_GATE        : CB.YELLOW + CF.RED + 'XX',
+    BLOCK_PORTAL      : CB.BLUE + '*>',
+    BLOCK_VEIW_BUSTER : CB.WHITE + CF.MAGENTA + ' +'
+}
 #--------------------------------------------------------------------
 levelpaths = [
     '001',
@@ -37,12 +42,13 @@ def ShowMatrix(matrix, zoom=1):
         length = 0
         for cell in row:
             for _ in range(zoom):
-                line+=blocks[cell]()
+                line+=PRINT_BLOCKS[cell]
                 length+=2
+        line += CS.RESET_ALL
         line = Centerize(line, length=length)
         for _ in range(zoom):
             PaddingPrint(line, centerize=False)
-
+            
 class Game:
     def __init__(self):
         self.level = None
