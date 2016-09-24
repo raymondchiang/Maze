@@ -79,8 +79,8 @@ class Level:
         '''Return the full maze matrix.'''
 
         row, col = self.size
-        for r in range(row):
-            yield self.__gen_row(r, 0, col)
+        for r in range(-1, row+1):
+            yield self.__gen_row(r, -1, col+1)
 
     def Move(self, direction):
         '''Move the current player position if possible.

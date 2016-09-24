@@ -12,7 +12,7 @@ def ValuePaser(value):
     else:
         return value
 
-def GetLevels():
+def ListLevels():
     return glob("levels/*.lvl")
 
 def LoadLevel(level_path):

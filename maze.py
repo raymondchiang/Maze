@@ -16,7 +16,7 @@ from printing import (
 from level import Level
 from generator import MazeGenerator
 from constants import *
-from loader import GetLevels, LoadLevel
+from loader import ListLevels, LoadLevel
 #-------------------------------------------
 PRINT_BLOCKS = {
     BLOCK_AIR         : CB.WHITE + '  ',
@@ -30,8 +30,21 @@ PRINT_BLOCKS = {
     BLOCK_VEIW_BUSTER : CB.WHITE + CF.MAGENTA + ' +'
 }
 #--------------------------------------------------------------------
-levelpaths = ['000','001','002','003']
+# How many levels are prepared
+TOTAL_LEVELS = 4
 #--------------------------------------------------------------------
+
+def GetLevel(level_no=0):
+    if level_no >= TOTAL_LEVELS:
+        return None
+    level_id = str(level_no)
+    while len(level_id) < 3:
+        level_id = '0' + level_id
+    level = LoadLevel('levels/%s.lvl' % level_id)
+    if level_no+1 < TOTAL_LEVELS:
+        # Register next level
+        level.next_level_generator = lambda: GetLevel(level_no+1)
+    return level
 
 def ShowMatrix(matrix, zoom=1):
     for row in matrix:
@@ -89,13 +102,16 @@ class Game:
         PaddingPrint('You cheat!', 'white', 'on_red')
         print()
         ShowMatrix(self.level.Maze())
+        print()
+        PaddingPrint('You cheat!', 'white', 'on_red')
+        print()
         time.sleep(CHEAT_PEEK_TIMER)
         Clear()
 
     def Play(self):
         Clear()
         if not self.level:
-            self.level = LoadLevel(levelpaths[0])
+            self.level = GetLevel()
         update_needed = True
         self.zoom = 3
         self.cheated = False
@@ -128,7 +144,7 @@ class Game:
         next_level = self.level.NextLevel()
         self.level.Reset()
         menu = ['Main Menu', 'Exit']
-        header = lambda: PrintFiglet('Congratulations !','standard','yellow')
+        header = lambda: PrintFiglet('Maze Solved!',color='yellow')
         if next_level:
             menu = ['Next Level'] + menu
 
@@ -152,7 +168,7 @@ class Game:
         self.Play()
 
     def LevelSelect(self):
-        levels = GetLevels()
+        levels = ListLevels()
         levelnames = [os.path.basename(x) for x in levels]
         selected = Menu(levelnames+['< Back'], header=lambda: PrintFiglet('Select a Level'), Large=True)
         if selected in [len(levelnames),-1]:

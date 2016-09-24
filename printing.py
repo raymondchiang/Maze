@@ -11,11 +11,11 @@ colorama.init(autoreset=True)
 if os.name == 'nt':
     # Change encoding to UTF-8
     os.system('@chcp 65001')
-    print('Unicode Check: ', end='')
+    print(CF.CYAN+'Unicode Check: ', end='')
     try:
         print(CF.GREEN+'😀 Ok.')
     except UnicodeEncodeError:
-        print(CF.WHITE+CB.RED+'Failed.')
+        print(CF.WHITE+CB.RED+' Failed ')
         print(CF.YELLOW+'Please restart Maze and try again.')
         sys.exit()
 
